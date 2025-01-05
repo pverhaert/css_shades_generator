@@ -1,6 +1,7 @@
 import './style.css';
 import Swal from 'sweetalert2';
 
+// Color conversion utilities
 const hexToRGB = hex => [
     parseInt(hex.slice(1, 3), 16),
     parseInt(hex.slice(3, 5), 16),
@@ -12,6 +13,7 @@ const RGBToHex = (r, g, b) => '#' + [r, g, b].map(x => {
     return hex.length === 1 ? '0' + hex : hex;
 }).join('');
 
+// Color analysis utilities
 const getLuminance = (r, g, b) => {
     const [rs, gs, bs] = [r, g, b].map(c => {
         c = c / 255;
@@ -22,10 +24,12 @@ const getLuminance = (r, g, b) => {
 
 const getContrastColor = (r, g, b) => getLuminance(r, g, b) > 0.5 ? '#000000' : '#FFFFFF';
 
+// Shade adjustment utility
 const adjustShade = (rgb, factor) => factor < 1
     ? rgb.map(channel => channel + (255 - channel) * (1 - factor))
     : rgb.map(channel => Math.max(0, Math.min(255, channel * (1 - (factor - 1) * 0.5))));
 
+// Clipboard functionality
 const copyToClipboard = async text => {
     try {
         await navigator.clipboard.writeText(text);
@@ -43,6 +47,7 @@ const copyToClipboard = async text => {
     }
 };
 
+// UI utilities
 const updateFavicon = (color) => {
     const canvas = document.createElement('canvas');
     canvas.width = 32;
@@ -79,71 +84,79 @@ const copyAllProperties = () => {
     });
 };
 
+// Main functionality
 const generateShades = () => {
-    const baseColor = document.getElementById('colorPicker').value;
-    const colorName = document.getElementById('colorName').value.toLowerCase();
-    const sanitizedName = colorName.replace(/[^a-z0-9-]/g, '-');
+    let allCssOutput = '';
+    let allPreviewHTML = '';
+    let firstColorLight;
 
-    const rgb = hexToRGB(baseColor);
-    const shades = {
-        25: adjustShade(rgb, 0.1),
-        50: adjustShade(rgb, 0.2),
-        100: adjustShade(rgb, 0.4),
-        200: adjustShade(rgb, 0.6),
-        300: adjustShade(rgb, 0.8),
-        400: rgb,
-        500: adjustShade(rgb, 1.2),
-        600: adjustShade(rgb, 1.4),
-        700: adjustShade(rgb, 1.6),
-        800: adjustShade(rgb, 1.8),
-        900: adjustShade(rgb, 2.0),
-        950: adjustShade(rgb, 2.2)
-    };
+    // Process each color input
+    for (let i = 1; i <= 4; i++) {
+        const baseColor = document.getElementById(`colorPicker${i}`).value;
+        const colorName = document.getElementById(`colorName${i}`).value.toLowerCase();
+        const sanitizedName = colorName.replace(/[^a-z0-9-]/g, '-');
 
-    // Set body background to shade 25
-    document.body.style.backgroundColor = RGBToHex(...shades[25]);
+        if (i === 1) {
+            updateFavicon(baseColor);
+        }
 
-    let cssOutput = '';
-    let previewHTML = '';
+        const rgb = hexToRGB(baseColor);
+        const shades = {
+            25: adjustShade(rgb, 0.1),
+            50: adjustShade(rgb, 0.2),
+            100: adjustShade(rgb, 0.4),
+            200: adjustShade(rgb, 0.6),
+            300: adjustShade(rgb, 0.8),
+            400: rgb,
+            500: adjustShade(rgb, 1.2),
+            600: adjustShade(rgb, 1.4),
+            700: adjustShade(rgb, 1.6),
+            800: adjustShade(rgb, 1.8),
+            900: adjustShade(rgb, 2.0),
+            950: adjustShade(rgb, 2.2)
+        };
 
-    Object.entries(shades).forEach(([shade, rgb]) => {
-        const hexColor = RGBToHex(...rgb);
-        const textColor = getContrastColor(...rgb);
-        const property = `--${sanitizedName}-${shade}: ${hexColor};`;
-        cssOutput += property + '\n';
+        if (i === 1) {
+            firstColorLight = RGBToHex(...shades[25]);
+            document.body.style.backgroundColor = firstColorLight;
+        }
 
-        previewHTML += `
-            <div class="w-24 h-24 rounded-lg p-2 flex flex-col justify-between cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all" 
-                 style="background-color: ${hexColor}; color: ${textColor}"
-                 onclick="copyToClipboard('${property}')">
-                <span class="font-medium">${shade}</span>
-                <span class="text-sm">${hexColor}</span>
-            </div>
-        `;
-    });
+        allCssOutput += `/* ${sanitizedName} colors */\n`;
+        let colorPreviewHTML = `<div class="space-y-2">
+                    <h3 class="font-semibold text-gray-800">${sanitizedName}</h3>
+                    <div class="grid grid-cols-3 gap-2">`;
 
-    document.getElementById('cssOutput').textContent = cssOutput.trim();
-    document.getElementById('colorPreview').innerHTML = previewHTML;
+        Object.entries(shades).forEach(([shade, rgb]) => {
+            const hexColor = RGBToHex(...rgb);
+            const textColor = getContrastColor(...rgb);
+            const property = `--${sanitizedName}-${shade}: ${hexColor};`;
+            allCssOutput += property + '\n';
 
-    // Set copy button background to shade 900
-    const copyAllBtn = document.getElementById('copyAllBtn');
-    copyAllBtn.style.backgroundColor = RGBToHex(...shades[900]);
-    copyAllBtn.style.color = getContrastColor(...shades[900]);
+            colorPreviewHTML += `
+                        <div class="aspect-square rounded-lg p-2 flex flex-col justify-between cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all text-xs"
+                            style="background-color: ${hexColor}; color: ${textColor}"
+                            onclick="copyToClipboard('${property}')">
+                            <span class="font-medium">${shade}</span>
+                            <span>${hexColor}</span>
+                        </div>`;
+        });
 
-    // Update favicon
-    updateFavicon(baseColor);
+        allCssOutput += '\n';
+        colorPreviewHTML += '</div></div>';
+        allPreviewHTML += colorPreviewHTML;
+    }
+
+    document.getElementById('cssOutput').textContent = allCssOutput.trim();
+    document.getElementById('colorPreview').innerHTML = allPreviewHTML;
 };
 
-// Add event listeners
+// Event listeners
 document.addEventListener('DOMContentLoaded', () => {
-    const colorPicker = document.getElementById('colorPicker');
-    const colorName = document.getElementById('colorName');
-    const copyAllBtn = document.getElementById('copyAllBtn');
+    for (let i = 1; i <= 4; i++) {
+        document.getElementById(`colorPicker${i}`).addEventListener('input', generateShades);
+        document.getElementById(`colorName${i}`).addEventListener('input', generateShades);
+    }
 
-    colorPicker.addEventListener('input', generateShades);
-    colorName.addEventListener('input', generateShades);
-    copyAllBtn.addEventListener('click', copyAllProperties);
-
-    // Generate initial shades
+    document.getElementById('copyAllBtn').addEventListener('click', copyAllProperties);
     generateShades();
 });

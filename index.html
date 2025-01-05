@@ -6,34 +6,74 @@
     <title>CSS Shades Generator</title>
     <link rel="icon" type="image/x-icon" id="favicon">
 </head>
+
 <body class="min-h-screen p-8">
-<div class="max-w-4xl mx-auto">
+<div class="max-w-6xl mx-auto">
     <h1 class="text-3xl font-bold mb-8 text-gray-800">CSS Custom Properties Shades Generator</h1>
 
-    <div class="bg-white rounded-lg p-6 shadow-md mb-8">
+    <div class="bg-white rounded-lg p-6 shadow-md mb-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Color Input 1 -->
         <div class="flex gap-4">
             <div>
-                <label for="colorPicker" class="block text-sm font-medium text-gray-700 mb-2">Select Base Color:</label>
-                <input type="color" id="colorPicker" value="#F04B20"
-                       class="w-24 h-12 rounded cursor-pointer">
+                <label for="colorPicker1" class="block text-sm font-medium text-gray-700 mb-2">Color 1:</label>
+                <input type="color" id="colorPicker1" value="#f04b20" class="w-24 h-12 rounded cursor-pointer">
             </div>
-
             <div class="flex-1">
-                <label for="colorName" class="block text-sm font-medium text-gray-700 mb-2">Color Name:</label>
-                <input type="text" id="colorName" placeholder="e.g., tm-primary" value="tm-primary"
+                <label for="colorName1" class="block text-sm font-medium text-gray-700 mb-2">Color 1 Name:</label>
+                <input type="text" id="colorName1" value="tm-primary"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+        </div>
+
+        <!-- Color Input 2 -->
+        <div class="flex gap-4">
+            <div>
+                <label for="colorPicker2" class="block text-sm font-medium text-gray-700 mb-2">Color 2:</label>
+                <input type="color" id="colorPicker2" value="#009cab" class="w-24 h-12 rounded cursor-pointer">
+            </div>
+            <div class="flex-1">
+                <label for="colorName2" class="block text-sm font-medium text-gray-700 mb-2">Color 2 Name:</label>
+                <input type="text" id="colorName2" value="tm-secondary"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+        </div>
+
+        <!-- Color Input 3 -->
+        <div class="flex gap-4">
+            <div>
+                <label for="colorPicker3" class="block text-sm font-medium text-gray-700 mb-2">Color 3:</label>
+                <input type="color" id="colorPicker3" value="#f0cf1f" class="w-24 h-12 rounded cursor-pointer">
+            </div>
+            <div class="flex-1">
+                <label for="colorName3" class="block text-sm font-medium text-gray-700 mb-2">Color 3 Name:</label>
+                <input type="text" id="colorName3" value="tm-tertiary"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+        </div>
+
+        <!-- Color Input 4 -->
+        <div class="flex gap-4">
+            <div>
+                <label for="colorPicker4" class="block text-sm font-medium text-gray-700 mb-2">Color 4:</label>
+                <input type="color" id="colorPicker4" value="#546363" class="w-24 h-12 rounded cursor-pointer">
+            </div>
+            <div class="flex-1">
+                <label for="colorName4" class="block text-sm font-medium text-gray-700 mb-2">Color 4 Name:</label>
+                <input type="text" id="colorName4" value="tm-slate"
                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
             </div>
         </div>
     </div>
 
     <div class="bg-white rounded-lg p-6 shadow-md mb-8">
-        <div id="colorPreview" class="flex flex-wrap gap-4"></div>
+        <div id="colorPreview" class="grid grid-cols-1 md:grid-cols-4 gap-8"></div>
     </div>
 
     <div class="bg-white rounded-lg p-6 shadow-md">
         <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-semibold text-gray-800">CSS Custom Properties:</h3>
-            <button id="copyAllBtn" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+            <button id="copyAllBtn"
+                    class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
                 Copy All Properties
             </button>
         </div>
