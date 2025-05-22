@@ -69,7 +69,28 @@ const copyAllProperties = () => {
         Swal.fire({
             icon: 'success',
             title: 'Copied CSS Properties',
-            html: 'Paste them in the <code style="color: darkred">:root</code> selector of your CSS file.',
+            html: 'Paste them directly into your CSS file.',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            background: '#e1fce9',
+            timer: 5000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer);
+                toast.addEventListener('mouseleave', Swal.resumeTimer);
+            }
+        });
+    });
+};
+
+const copyTailwindProperties = () => {
+    const properties = document.getElementById('tailwindOutput').textContent;
+    copyToClipboard(properties).then(() => {
+        Swal.fire({
+            icon: 'success',
+            title: 'Copied Tailwind Colors',
+            html: 'Paste them in your CSS file to use with Tailwind.',
             toast: true,
             position: 'top-end',
             showConfirmButton: false,
@@ -86,7 +107,8 @@ const copyAllProperties = () => {
 
 // Main functionality
 const generateShades = () => {
-    let allCssOutput = '';
+    let allCssOutput = ':root {\n';
+    let allTailwindOutput = '@theme {\n';
     let allPreviewHTML = '';
     let firstColorLight;
 
@@ -121,7 +143,8 @@ const generateShades = () => {
             document.body.style.backgroundColor = firstColorLight;
         }
 
-        allCssOutput += `/* ${sanitizedName} colors */\n`;
+        allCssOutput += `  /* ${sanitizedName} colors */\n`;
+        allTailwindOutput += `  /* ${sanitizedName} colors */\n`;
         let colorPreviewHTML = `<div class="space-y-2">
                     <h3 class="font-semibold text-gray-800">${sanitizedName}</h3>
                     <div class="grid grid-cols-3 gap-2">`;
@@ -129,25 +152,55 @@ const generateShades = () => {
         Object.entries(shades).forEach(([shade, rgb]) => {
             const hexColor = RGBToHex(...rgb);
             const textColor = getContrastColor(...rgb);
-            const property = `--${sanitizedName}-${shade}: ${hexColor};`;
-            allCssOutput += property + '\n';
+            const cssProperty = `--${sanitizedName}-${shade}: ${hexColor};`;
+            const tailwindProperty = `  --color-${sanitizedName}-${shade}: ${hexColor};`;
+            
+            allCssOutput += '  ' + cssProperty + '\n';
+            allTailwindOutput += tailwindProperty + '\n';
 
             colorPreviewHTML += `
                         <div class="aspect-square rounded-lg p-2 flex flex-col justify-between cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all text-xs"
                             style="background-color: ${hexColor}; color: ${textColor}"
-                            onclick="copyToClipboard('${property}')">
+                            onclick="copyToClipboard('${cssProperty}')">
                             <span class="font-medium">${shade}</span>
                             <span>${hexColor}</span>
                         </div>`;
         });
 
         allCssOutput += '\n';
+        allTailwindOutput += '\n';
         colorPreviewHTML += '</div></div>';
         allPreviewHTML += colorPreviewHTML;
     }
 
+    allTailwindOutput += '}';
+    allCssOutput += '}';
+    
     document.getElementById('cssOutput').textContent = allCssOutput.trim();
+    document.getElementById('tailwindOutput').textContent = allTailwindOutput.trim();
     document.getElementById('colorPreview').innerHTML = allPreviewHTML;
+};
+
+// Tab switching functionality
+const switchTab = (tabId) => {
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.add('hidden');
+    });
+    
+    // Show the selected tab content
+    document.getElementById(tabId).classList.remove('hidden');
+    
+    // Reset all tab buttons
+    document.querySelectorAll('#cssTabBtn, #tailwindTabBtn').forEach(btn => {
+        btn.classList.remove('border-b-2', 'border-blue-500', 'text-blue-600');
+        btn.classList.add('text-gray-600', 'hover:text-blue-600');
+    });
+    
+    // Highlight the active tab button
+    const activeBtn = tabId === 'cssTabContent' ? 'cssTabBtn' : 'tailwindTabBtn';
+    document.getElementById(activeBtn).classList.remove('text-gray-600', 'hover:text-blue-600');
+    document.getElementById(activeBtn).classList.add('border-b-2', 'border-blue-500', 'text-blue-600');
 };
 
 // Event listeners
@@ -158,5 +211,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     document.getElementById('copyAllBtn').addEventListener('click', copyAllProperties);
+    document.getElementById('copyTailwindBtn').addEventListener('click', copyTailwindProperties);
+    
+    // Tab switching event listeners
+    document.getElementById('cssTabBtn').addEventListener('click', () => switchTab('cssTabContent'));
+    document.getElementById('tailwindTabBtn').addEventListener('click', () => switchTab('tailwindTabContent'));
+    
     generateShades();
 });
