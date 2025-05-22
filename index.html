@@ -70,14 +70,39 @@
     </div>
 
     <div class="bg-white rounded-lg p-6 shadow-md">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold text-gray-800">CSS Custom Properties:</h3>
-            <button id="copyAllBtn"
-                    class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
-                Copy All Properties
+        <!-- Tab Navigation -->
+        <div class="flex border-b mb-4">
+            <button id="cssTabBtn" class="px-4 py-2 border-b-2 border-blue-500 text-blue-600 font-medium">
+                CSS Custom Properties
+            </button>
+            <button id="tailwindTabBtn" class="px-4 py-2 text-gray-600 hover:text-blue-600 font-medium">
+                Tailwind Colors
             </button>
         </div>
-        <pre id="cssOutput" class="bg-gray-50 p-4 rounded-md overflow-x-auto"></pre>
+        
+        <!-- CSS Properties Tab Content -->
+        <div id="cssTabContent" class="tab-content">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-gray-800">CSS Custom Properties:</h3>
+                <button id="copyAllBtn"
+                        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+                    Copy Custom Properties
+                </button>
+            </div>
+            <pre id="cssOutput" class="bg-gray-50 p-4 rounded-md overflow-x-auto"></pre>
+        </div>
+        
+        <!-- Tailwind Colors Tab Content -->
+        <div id="tailwindTabContent" class="tab-content hidden">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-gray-800">Tailwind Colors:</h3>
+                <button id="copyTailwindBtn"
+                        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+                    Copy Tailwind Colors
+                </button>
+            </div>
+            <pre id="tailwindOutput" class="bg-gray-50 p-4 rounded-md overflow-x-auto"></pre>
+        </div>
     </div>
 </div>
 <script type="module" src="/src/shades.js"></script>
